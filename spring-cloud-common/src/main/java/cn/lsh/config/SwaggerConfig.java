@@ -13,16 +13,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig {
+public abstract class SwaggerConfig {
 	
-	@Bean
-	public Docket newsApi(){
-		return new Docket(DocumentationType.SWAGGER_2).groupName("consumer")
-				.apiInfo(apiInfo())
-				.select()
-				.paths(PathSelectors.regex("/consumer/.*"))
-				.build();
-	}
+	
+	public abstract Docket newsApi();
+//	{
+//		return new Docket(DocumentationType.SWAGGER_2)
+////		        .groupName("consumer")
+//				.apiInfo(apiInfo())
+//				.select()
+//				.paths(PathSelectors.regex("/consumer/.*"))
+//				.build();
+//	}
 
 	public ApiInfo apiInfo(){
 		return new ApiInfoBuilder().title("系统Api接口管理")

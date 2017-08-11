@@ -138,4 +138,10 @@ public class Book {
         result = prime * result + ((getPublisher() == null) ? 0 : getPublisher().hashCode());
         return result;
     }
+    
+    @Override
+    public String toString() {
+    	// TODO Auto-generated method stub
+    	return "bookId:"+bookId+" bookName:"+bookName+" publisher:"+publisher;
+    }
 }

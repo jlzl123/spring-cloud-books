@@ -8,9 +8,9 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>cn.lsh</groupId>
-  <artifactId>spring-cloud-provider</artifactId>
+  <artifactId>spring-cloud-api-gateway</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>spring-cloud-provider</name>
+  <name>spring-cloud-api-gateway</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -25,6 +25,5 @@
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-eureka</artifactId>
     </dependency>
-  
   </dependencies>
 </project>

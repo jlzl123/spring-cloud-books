@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import lombok.Data;
 
 @Data
+//绑定属性的配置信息到该bean中，配置信息前缀为audience
 @ConfigurationProperties(prefix="audience")
 @Component
 @ApiModel(value="JWT")

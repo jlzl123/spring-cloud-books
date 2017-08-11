@@ -61,7 +61,7 @@ public class BookController {
 	})
 	@PostMapping(value="/api/books",consumes=MediaType.APPLICATION_JSON_UTF8_VALUE,produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public BaseResponse addBook(@Validated @ApiParam(value="添加的某本书籍信息",required=true)@RequestBody Book book){
-		LOGGER.info("添加书籍：{}"+book.getBookName());
+		LOGGER.info("添加书籍：{}",book.getBookName());
 		BaseResponse baseResponse=new BaseResponse();
 		int i=bookService.saveBook(book);
 		if(i!=0){

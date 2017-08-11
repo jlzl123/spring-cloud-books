@@ -34,5 +34,7 @@
     <module>spring-cloud-service-discovery</module>
     <module>spring-cloud-common</module>
     <module>spring-cloud-provider</module>
+    <module>spring-cloud-provider-dubbo</module>
+    <module>spring-cloud-api-gateway</module>
   </modules>
 </project>

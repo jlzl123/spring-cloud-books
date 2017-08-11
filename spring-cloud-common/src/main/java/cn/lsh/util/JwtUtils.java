@@ -30,12 +30,13 @@ public class JwtUtils {
 	}
 
 	/*
-	 * 验证jwt是否合法
+	 * 验证jwt是否合法，即解密
 	 */
 	public static Claims parseJWT(String jsonWebToken,String base64Security){
 		try {
 			return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(base64Security))
-					.parseClaimsJws(jsonWebToken).getBody();		
+					.parseClaimsJws(jsonWebToken)
+					.getBody();		
 		} catch (Exception e) {
 			// TODO: handle exception
 			LOGGER.error("exception message is: {}", ExceptionUtils.getStackTrace(e));
@@ -44,9 +45,9 @@ public class JwtUtils {
 	}
 	
 	/*
-	 * 创建jwt
+	 * 创建jwt,即加密
 	 */
-	private static String createJWT(LoginParamter loginParamter,User user,Audience audience){
+	public static String createJWT(LoginParamter loginParamter,User user,Audience audience){
 		long ttlmillis=audience.getExpiresSecond()*1000;
 		String base64Security=audience.getBase64Secret();
 		Date now=new Date(System.currentTimeMillis());
@@ -56,21 +57,28 @@ public class JwtUtils {
 		Key signingKey=new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
 		
 		//添加构成JWT的参数		
-		JwtBuilder builder=Jwts.builder().setHeaderParam("typ", "JWT")
-				.claim("role", user.getRole())
+		JwtBuilder builder=Jwts.builder().setHeaderParam("typ", "JWT")//typ表示token的类型
+				.claim("role", user.getRole())// 自定义属性
 				.claim("unique_name", loginParamter.getUserName())
 				.claim("userid", user.getName())
-				.setIssuer(audience.getName())
-				.setAudience(audience.getClientId())
-				.signWith(SignatureAlgorithm.HS256, signingKey);
+				.setIssuer(audience.getName())// 签发者
+				.setAudience(audience.getClientId())//接受者
+				.signWith(SignatureAlgorithm.HS256, signingKey);// 签名算法以及密匙
 		
         //添加Token过期时间
 		if(ttlmillis>=0){
 			Date exp=new Date(System.currentTimeMillis()+ttlmillis);
-			builder.setExpiration(exp).setNotBefore(now);
+			builder.setExpiration(exp)// 过期时间
+			.setNotBefore(now);// 失效时间
 		}
 		
 		//生成JWT
 		return builder.compact();
+	}
+	
+	public static void main(String[] args) {
+		Claims c=parseJWT("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoi566h55CG5ZGYIiwidW5pcXVlX25hbWUiOiJsaXVzaGlodWEiLCJ1c2VyaWQiOiJsaXVzaGlodWEiLCJpc3MiOiJsaXVzaGlodWEiLCJhdWQiOiIwOThmNmJjZDQ2MjFkMzczY2FkZTRlODMyNjI3YjRmNiIsImV4cCI6MTUwMjM1OTQ1NSwibmJmIjoxNTAyMzUyMjU0fQ.OeDN4deNUlDiUmwROjxw5_xrurJt46b1RZ0K5yNKH88", 
+				"MDk4ZjZiY2Q0NjIxZDM3M2NhZGU0ZTgzMjYyN2I0ZjY=");
+		System.out.println(c);
 	}
 }

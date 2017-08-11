@@ -19,6 +19,9 @@ import cn.lsh.vo.security.LoginParamter;
 public class BaseController {
 	private static final Logger LOGGER=LoggerFactory.getLogger(BaseController.class);
 	
+	/*
+	 * 验证参数是否正确
+	 */
 	public BaseResponse getValidatedResult(BindingResult bindingResult){
 		if(bindingResult.hasErrors()){
 			BaseResponse baseResponse=new BaseResponse();
