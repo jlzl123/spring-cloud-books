@@ -36,5 +36,7 @@
     <module>spring-cloud-provider</module>
     <module>spring-cloud-provider-dubbo</module>
     <module>spring-cloud-api-gateway</module>
+    <module>spring-cloud-config-server</module>
+    <module>spring-cloud-consumer</module>
   </modules>
 </project>

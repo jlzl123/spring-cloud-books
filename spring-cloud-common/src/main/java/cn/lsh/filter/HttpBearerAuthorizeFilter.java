@@ -100,7 +100,7 @@ public class HttpBearerAuthorizeFilter extends ZuulFilter{
 		String headString=authorization.substring(0, 6).toLowerCase();
 		//compareTo逐个比较两个字符串中相对字符的ascll值，所有字符都相同返回0，发现小于时返回正整数，大于时返回负整数，即ascll值的差值。
 		if(headString.compareTo(Constants.BEARER)==0){
-			authorization=authorization.substring(6, authorization.length());
+			authorization=authorization.substring(7, authorization.length());
 			if(JwtUtils.parseJWT(authorization, audience.getBase64Secret())!=null){
 				return true;
 			}
@@ -113,7 +113,7 @@ public class HttpBearerAuthorizeFilter extends ZuulFilter{
 	 */
 	private boolean isExistedAuthorization(HttpServletRequest request){
 		LOGGER.info("{} request to {}",request.getMethod(),request.getRequestURL());
-		String authorization=request.getHeader("Authorization");
+		String authorization=request.getHeader(Constants.AUTHORIZATION);
 		LOGGER.info("authorization is: {}",authorization);
 		return !(authorization==null||authorization.length()<=7);
 	}

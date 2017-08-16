@@ -49,18 +49,21 @@ public class JWTController extends BaseController{
     	LOGGER.info("{} 获取access_token",loginParamter.getUserName());
     	BaseResponse baseResponse=null;
     	
+    	//验证参数
     	baseResponse=getValidatedResult(result);
     	if(baseResponse!=null){
     		LOGGER.info("{} 获取access_token失败,{}",loginParamter.getUserName(),baseResponse.getMessage());
     		return baseResponse;
     	}
     	
+    	//验证clientId是否有效
     	baseResponse=isValidClientId(loginParamter, audience);
     	if(baseResponse!=null){
     		LOGGER.info("{} 获取access_token失败,{}",loginParamter.getUserName(),baseResponse.getMessage());
     		return baseResponse;
     	}
     	
+    	//验证用户名密码是否正确
     	User user=userService.findUserInfoByName(loginParamter.getUserName());
     	baseResponse=isValidUserName(user);
     	if(baseResponse!=null){
