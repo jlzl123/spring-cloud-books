@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 
 
 
@@ -184,5 +186,10 @@ public class BookController {
 			baseResponse.setData("Deleted book id=" + bookId);
 		}
     	return baseResponse;
+    }
+    
+    @GetMapping("/getInfo")
+    public String test(@Value("${info.app.name}")String name){
+    	return name;
     }
 }

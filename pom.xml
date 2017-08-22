@@ -38,5 +38,9 @@
     <module>spring-cloud-api-gateway</module>
     <module>spring-cloud-config-server</module>
     <module>spring-cloud-consumer</module>
+    <module>spring-cloud-monitor-dashboard</module>
+    <module>spring-cloud-turbine-aggregator</module>
+    <module>spring-cloud-zipkin-server</module>
+    <module>spring-cloud-admin-server</module>
   </modules>
 </project>

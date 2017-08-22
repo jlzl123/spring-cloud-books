@@ -18,8 +18,8 @@ import cn.lsh.util.Constants;
 import cn.lsh.vo.response.BaseResponse;
 import cn.lsh.vo.security.LoginParamter;
 import feign.hystrix.FallbackFactory;
-
-@FeignClient(name="api-gateway",fallback=BookConsumerService.FeignClientFallbackFactory.class)
+//如果需要触发来进行熔断，则需要用 fallbackFactory
+@FeignClient(name="api-gateway",fallbackFactory=BookConsumerService.FeignClientFallbackFactory.class)
 public interface BookConsumerService {
 	
 	@PostMapping(value="/api-gateway/v1/api/books")

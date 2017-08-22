@@ -182,8 +182,7 @@ public class BookConsumerController extends BaseController{
 			LOGGER.info("token_type is: {}",token.get(Constants.TOKEN_TPYE));
 			LOGGER.info("access_token is: {}",token.get(Constants.ACCESS_TOKEN));
 			LOGGER.info("expires_in:",token.get(Constants.EXPIRES_IN));
-			stringRedisTemplate.opsForValue().set(Constants.BEARER, (String)token.get(Constants.TOKEN_TPYE)
-					+" "+token.get(Constants.ACCESS_TOKEN),
+			stringRedisTemplate.opsForValue().set(Constants.BEARER, (String)token.get(Constants.ACCESS_TOKEN),
 					((Integer)token.get(Constants.EXPIRES_IN)).longValue(),TimeUnit.SECONDS);
 			flag=true;
 		}
