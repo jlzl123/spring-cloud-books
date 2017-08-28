@@ -42,6 +42,7 @@ public class AdminServerApplication {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// TODO Auto-generated method stub
+			//定义/login.html跳转到登录页面，并且登录提交一个post请求/login
 			http.formLogin().loginPage("/login.html").loginProcessingUrl("/login").permitAll();
 			
 			http.logout().logoutUrl("/logout");
@@ -52,6 +53,7 @@ public class AdminServerApplication {
 			http.authorizeRequests()
 			    .antMatchers("/login.html", "/**/*.css","/img/**","/third-party/**")
 		        .permitAll();
+			//定义任何其他请求都要经过权限认证
 			http.authorizeRequests().antMatchers("/**").authenticated();
 			
 			http.httpBasic();

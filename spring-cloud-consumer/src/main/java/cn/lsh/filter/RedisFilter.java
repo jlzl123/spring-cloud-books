@@ -60,21 +60,24 @@ public class RedisFilter implements Filter{
 		String jwtToken=stringRedisTemplate.opsForValue().get(Constants.BEARER);
 		LoginParamter loginParamter=(LoginParamter) redisTemplate.opsForValue().get(Constants.LOGIN_PARAMETER);
 		if(!ObjectUtils.isEmpty(jwtToken)){//若token不为空，则执行controller方法
+			log.info("redis存在jwtToken: {}",jwtToken);
 			chain.doFilter(request, response);
+		}else{
+			log.info("redis不存在token，请求api网关");
+			//token为空，则向API网关申请新的token
+			BaseResponse baseRespone=bookConsumerService.getToken(loginParamter);
+			if(baseRespone.getCode()==ResponseStatus.OK.getCode()){
+				Map<String, Object> tokenMap=(HashMap<String, Object>)baseRespone.getData();
+				log.info(Constants.TOKEN_TPYE+": {}",tokenMap.get(Constants.TOKEN_TPYE));
+				log.info(Constants.ACCESS_TOKEN+": {}",tokenMap.get(Constants.ACCESS_TOKEN));
+				log.info(Constants.EXPIRES_IN+": {}",tokenMap.get(Constants.EXPIRES_IN));
+				
+				stringRedisTemplate.opsForValue().set(Constants.BEARER, (String)tokenMap.get(Constants.ACCESS_TOKEN), Long.valueOf(tokenMap.get(Constants.EXPIRES_IN).toString()),TimeUnit.SECONDS);
+				
+				chain.doFilter(request, response);
+			}
 		}
 		
-		//token为空，则向API网关申请新的token
-		BaseResponse baseRespone=bookConsumerService.getToken(loginParamter);
-	    if(baseRespone.getCode()==ResponseStatus.OK.getCode()){
-	    	Map<String, Object> tokenMap=(HashMap<String, Object>)baseRespone.getData();
-	    	log.info(Constants.TOKEN_TPYE+": {}",tokenMap.get(Constants.TOKEN_TPYE));
-	    	log.info(Constants.ACCESS_TOKEN+": {}",tokenMap.get(Constants.ACCESS_TOKEN));
-	    	log.info(Constants.EXPIRES_IN+": {}",tokenMap.get(Constants.EXPIRES_IN));
-	    	
-	    	stringRedisTemplate.opsForValue().set(Constants.BEARER, (String)tokenMap.get(Constants.ACCESS_TOKEN), Long.valueOf(tokenMap.get(Constants.EXPIRES_IN).toString()),TimeUnit.SECONDS);
-	    	
-	    	chain.doFilter(request, response);
-	    }
 		log.info("============= end to execute RedisFilter =================");
 	}
 	
