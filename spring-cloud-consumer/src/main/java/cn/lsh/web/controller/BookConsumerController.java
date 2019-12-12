@@ -5,8 +5,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.validation.Valid;
 
+import cn.lsh.util.JwtUtils;
 import io.swagger.annotations.Api;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +77,11 @@ public class BookConsumerController extends BaseController{
 //			Map<String, Object> token=(Map<String, Object>) baseRespone.getData();
 //			return bookConsumerService.addBook(Constants.BEARER+" "+token.get(Constants.ACCESS_TOKEN), book);
 //		}
-		return bookConsumerService.addBook(Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER), book);
+		String authorization = JwtUtils.getAuthorization(request);
+		if (StringUtils.isBlank(authorization)) {
+			authorization = Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER);
+		}
+		return bookConsumerService.addBook(authorization, book);
 	}
 	
 	@GetMapping(value="/consumer/books",produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -95,7 +101,11 @@ public class BookConsumerController extends BaseController{
 //			Map<String, Object> token=(Map<String, Object>) baseResponse.getData();
 //			return bookConsumerService.getBooks(Constants.BEARER+" "+token.get(Constants.ACCESS_TOKEN));
 //		}
-		return bookConsumerService.getBooks(Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER));
+		String authorization = JwtUtils.getAuthorization(request);
+		if (StringUtils.isBlank(authorization)) {
+			authorization = Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER);
+		}
+		return bookConsumerService.getBooks(authorization);
 	}
 	
 	@GetMapping(value="/consumer/books/{bookId:[0-9]*}")
@@ -120,7 +130,11 @@ public class BookConsumerController extends BaseController{
 //			Map<String, Object> token=(Map<String, Object>) baseResponse.getData();
 //			return bookConsumerService.getBook(Constants.BEARER+" "+token.get(Constants.ACCESS_TOKEN),bookId);
 //		}
-		return bookConsumerService.getBook(Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER),bookId);
+		String authorization = JwtUtils.getAuthorization(request);
+		if (StringUtils.isBlank(authorization)) {
+			authorization = Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER);
+		}
+		return bookConsumerService.getBook(authorization,bookId);
 	}
 	
 	@PutMapping(value="/consumer/books/{bookId:[0-9]*}")
@@ -145,7 +159,11 @@ public class BookConsumerController extends BaseController{
 //			Map<String, Object> token=(Map<String, Object>) baseResponse.getData();
 //			return bookConsumerService.updateBook(Constants.BEARER+" "+token.get(Constants.ACCESS_TOKEN),bookId,book);
 //		}
-		return bookConsumerService.updateBook(Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER),bookId,book);
+		String authorization = JwtUtils.getAuthorization(request);
+		if (StringUtils.isBlank(authorization)) {
+			authorization = Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER);
+		}
+		return bookConsumerService.updateBook(authorization,bookId,book);
 	}
 	
 	@DeleteMapping(value="/consumer/books/{bookId:[0-9]*}")
@@ -170,7 +188,11 @@ public class BookConsumerController extends BaseController{
 //			Map<String, Object> token=(Map<String, Object>) response.getData();
 //			return bookConsumerService.deleteBook(Constants.BEARER+" "+token.get(Constants.ACCESS_TOKEN), bookId);
 //		}
-		return bookConsumerService.deleteBook(Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER), bookId);
+		String authorization = JwtUtils.getAuthorization(request);
+		if (StringUtils.isBlank(authorization)) {
+			authorization = Constants.BEARER+" "+stringRedisTemplate.opsForValue().get(Constants.BEARER);
+		}
+		return bookConsumerService.deleteBook(authorization, bookId);
 	}
 	
 	//验证用户合法，生成token并保存到redis

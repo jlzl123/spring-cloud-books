@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 
+/***
+ * @description zuul网关token权限校验过滤器
+ * @author liushihua
+ * @date 2019/12/11 20:58
+ */
+public class HttpBearerAuthorizeFilter extends ZuulFilter {
+	private static final Logger LOGGER = LoggerFactory.getLogger(HttpBearerAuthorizeFilter.class);
 
-public class HttpBearerAuthorizeFilter extends ZuulFilter{
-	private static final Logger LOGGER=LoggerFactory.getLogger(HttpBearerAuthorizeFilter.class);
 	@Autowired
 	private Audience audience;
+
 	@Autowired
 	private ResponseHandler responseHandler;
 
@@ -39,25 +46,25 @@ public class HttpBearerAuthorizeFilter extends ZuulFilter{
 	@Override
 	public Object run() {
 		// TODO Auto-generated method stub
-		RequestContext ctx=RequestContext.getCurrentContext();
-		HttpServletRequest request=ctx.getRequest();
+		RequestContext ctx = RequestContext.getCurrentContext();
+		HttpServletRequest request = ctx.getRequest();
 		try {
 			//无Authorization时返回处理逻辑
-			if(!isExistedAuthorization(request)){
+			if (!isExistedAuthorization(request)) {
 				responseHandler(ctx, ResponseStatus.NO_AUTHORIZATION);
 				return null;
 			}
 			//JWT无效时返回处理逻辑
-			if(!isValidJwt(request)){
+			if (!isValidJwt(request)) {
 				responseHandler(ctx, ResponseStatus.INVALID_TOKEN);
 				return null;
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			LOGGER.error("exception message : {}",ExceptionUtils.getStackTrace(e));
+			LOGGER.error("exception message : {}", ExceptionUtils.getStackTrace(e));
 			return null;
 		}
-		LOGGER.info("request url : {}",request.getRequestURI());
+		LOGGER.info("request url : {}", request.getRequestURI());
 		return null;
 	}
 
@@ -76,45 +83,46 @@ public class HttpBearerAuthorizeFilter extends ZuulFilter{
 	/*
 	 * 返回逻辑统一处理
 	 */
-	private void responseHandler(RequestContext ctx,ResponseStatus responseStatus) throws JsonProcessingException, IOException{
-		ObjectMapper mapper=new ObjectMapper();
+	private void responseHandler(RequestContext ctx, ResponseStatus responseStatus) throws JsonProcessingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
 		//zuul过滤请求，false为不路由，true为路由
 		ctx.setSendZuulResponse(false);
-		HttpServletResponse response=ctx.getResponse();
+		HttpServletResponse response = ctx.getResponse();
 		response.setCharacterEncoding("utf-8");
 		response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.getWriter().write(mapper.writeValueAsString(this.responseHandler.getBaseResponse(responseStatus)));
-		
+
 		ctx.setResponse(response);
 	}
-	
+
 	/*
 	 * 判断JWT是否有效
 	 */
-	private boolean isValidJwt(HttpServletRequest request){
-		LOGGER.info("{} request to {}",request.getMethod(),request.getRequestURL());
-		String authorization=request.getHeader("Authorization");
-		LOGGER.info("authorization is: {}",authorization);
+	private boolean isValidJwt(HttpServletRequest request) {
+		LOGGER.info("{} request to {}", request.getMethod(), request.getRequestURL());
+		//bearer_加上jwt
+		String authorization = JwtUtils.getAuthorization(request);
+		LOGGER.info("authorization is: {}", authorization);
 		//access_token的头信息,定义为bearer
-		String headString=authorization.substring(0, 6).toLowerCase();
+		String headString = authorization.substring(0, 6).toLowerCase();
 		//compareTo逐个比较两个字符串中相对字符的ascll值，所有字符都相同返回0，发现小于时返回正整数，大于时返回负整数，即ascll值的差值。
-		if(headString.compareTo(Constants.BEARER)==0){
-			authorization=authorization.substring(7, authorization.length());
-			if(JwtUtils.parseJWT(authorization, audience.getBase64Secret())!=null){
+		if (headString.compareTo(Constants.BEARER) == 0) {
+			authorization = authorization.substring(7);
+			if (JwtUtils.parseJWT(authorization, audience.getBase64Secret()) != null) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/*
 	 * 判断Authorization是否存在
 	 */
-	private boolean isExistedAuthorization(HttpServletRequest request){
-		LOGGER.info("{} request to {}",request.getMethod(),request.getRequestURL());
-		String authorization=request.getHeader(Constants.AUTHORIZATION);
-		LOGGER.info("authorization is: {}",authorization);
-		return !(authorization==null||authorization.length()<=7);
+	private boolean isExistedAuthorization(HttpServletRequest request) {
+		LOGGER.info("{} request to {}", request.getMethod(), request.getRequestURL());
+		String authorization = request.getHeader(Constants.AUTHORIZATION);
+		LOGGER.info("authorization is: {}", authorization);
+		return !(authorization == null || authorization.length() <= 7);
 	}
 }

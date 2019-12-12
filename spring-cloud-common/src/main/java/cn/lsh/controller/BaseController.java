@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -16,8 +17,13 @@ import cn.lsh.vo.response.BaseResponse;
 import cn.lsh.vo.security.Audience;
 import cn.lsh.vo.security.LoginParamter;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class BaseController {
 	private static final Logger LOGGER=LoggerFactory.getLogger(BaseController.class);
+
+	@Autowired
+	protected HttpServletRequest request;
 	
 	/*
 	 * 验证参数是否正确

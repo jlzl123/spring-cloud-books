@@ -65,9 +65,13 @@ public interface BookConsumerService {
 				@Override
 				public BaseResponse getToken(LoginParamter loginParamter) {
 					// TODO Auto-generated method stub
-                    FeignClientFallbackFactory.LOGGER.info("异常发生，进入fallback方法，接收的参数：clientId = {}", loginParamter.getClientId());
-                    FeignClientFallbackFactory.LOGGER.info("异常发生，进入fallback方法，接收的参数：userName = {}", loginParamter.getUserName());
-                    FeignClientFallbackFactory.LOGGER.info("异常发生，进入fallback方法，接收的参数：password = {}", loginParamter.getPassword());
+					if (loginParamter == null) {
+						FeignClientFallbackFactory.LOGGER.info("异常发生，进入fallback方法，接收的参数：loginParamter is null");
+					} else {
+						FeignClientFallbackFactory.LOGGER.info("异常发生，进入fallback方法，接收的参数：clientId = {}", loginParamter.getClientId());
+						FeignClientFallbackFactory.LOGGER.info("异常发生，进入fallback方法，接收的参数：userName = {}", loginParamter.getUserName());
+						FeignClientFallbackFactory.LOGGER.info("异常发生，进入fallback方法，接收的参数：password = {}", loginParamter.getPassword());
+					}
 					return initFallbackRespone();
 				}
 				
